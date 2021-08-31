@@ -31,7 +31,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 					j.lvUnitName.items = mainData.unitList
 				} else {
 					j.lvUnitName.items = mainData.unitList.filtered {
-						it.toString().contains(new)
+						it.toString().contains(new, ignoreCase = true)
 					}
 				}
 			}
