@@ -11,7 +11,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 
 	override val root: BorderPane
 	private val j: MainWndJ
-	private lateinit var mainData: MainData
+	private var mainData: MainData? = null
 
 	init {
 		primaryStage.isResizable = true
@@ -26,8 +26,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		j.k = this
 
 		j.tfUnitNameFilter.textProperty().addListener { _, _, new ->
-			println("..................")
-			if (::mainData.isInitialized) {
+			mainData?.also { mainData ->
 				if (new.isBlank()) {
 					j.lvUnitName.items = mainData.unitList
 				} else {
@@ -55,8 +54,9 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 	}
 
 	private fun loadData() {
-		mainData = MainData(StaticVars.appConfig.defaultDirectory)
-		j.lvUnitName.items = mainData.unitList
+		mainData = MainData(StaticVars.appConfig.defaultDirectory).also {
+			j.lvUnitName.items = it.unitList
+		}
 	}
 
 }
