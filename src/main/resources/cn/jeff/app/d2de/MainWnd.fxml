@@ -13,7 +13,21 @@
 			<padding>
 				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
 			</padding>
-			<Button onAction="#btnClick" fx:id="btnOpen" mnemonicParsing="false" text="打开"/>
+			<Button fx:id="btnOpen" mnemonicParsing="false" onAction="#btnClick" text="打开"/>
 		</FlowPane>
 	</top>
+	<left>
+		<VBox prefWidth="350.0" spacing="4.0" BorderPane.alignment="CENTER">
+			<padding>
+				<Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+			</padding>
+			<TextField fx:id="tfUnitNameFilter"/>
+			<ListView fx:id="lvUnitName" VBox.vgrow="ALWAYS"/>
+		</VBox>
+	</left>
+	<bottom>
+		<HBox prefHeight="51.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+			<Button mnemonicParsing="false" text="Button"/>
+		</HBox>
+	</bottom>
 </BorderPane>
