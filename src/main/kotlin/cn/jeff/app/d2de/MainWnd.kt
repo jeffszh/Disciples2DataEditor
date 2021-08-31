@@ -24,6 +24,19 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		)
 		j = loader.getController()
 		j.k = this
+
+		j.tfUnitNameFilter.textProperty().addListener { _, _, new ->
+			println("..................")
+			if (::mainData.isInitialized) {
+				if (new.isBlank()) {
+					j.lvUnitName.items = mainData.unitList
+				} else {
+					j.lvUnitName.items = mainData.unitList.filtered {
+						it.toString().contains(new)
+					}
+				}
+			}
+		}
 	}
 
 	fun btnClick(actionEvent: ActionEvent) {
