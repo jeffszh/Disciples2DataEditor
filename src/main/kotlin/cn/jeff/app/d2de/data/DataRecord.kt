@@ -1,15 +1,16 @@
 package cn.jeff.app.d2de.data
 
+import com.linuxense.javadbf.DBFDataType
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.collections.ObservableList
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableView
 import tornadofx.*
+import java.io.IOException
 
 class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 
 	private val fieldNames: List<String>
-	private val fieldValues: ObservableList<String>
+	private val fieldValues: FieldValueAccessor
 	private val extraInfos: Array<String?>
 	private val customActions: Array<(() -> Unit)?>
 	private val dataRecordItem: List<DataRecordItem>
@@ -20,15 +21,56 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 		fieldNames = (0 until fieldCount).map { i ->
 			dbfWrapper.fields[i].name
 		}
-		fieldValues = (0 until fieldCount).map { i ->
-			dbfWrapper.records[recNo][i].toString()
-		}.observable()
+		fieldValues = FieldValueAccessor(
+			getter = { fieldInd ->
+				dbfWrapper.records[recNo][fieldInd].toString()
+			},
+			setter = { fieldInd, textValue ->
+				val anyValue = when (val txtVal = textValue.trim()) {
+					"", null.toString() -> {
+						null
+					}
+					else -> {
+						when (val fieldType = dbfWrapper.fields[fieldInd].type) {
+							DBFDataType.CHARACTER, DBFDataType.VARCHAR -> {
+								txtVal
+							}
+							DBFDataType.NUMERIC,
+							DBFDataType.FLOATING_POINT,
+							DBFDataType.DOUBLE,
+							DBFDataType.CURRENCY -> {
+								txtVal.toDouble()
+							}
+							DBFDataType.LONG -> {
+								txtVal.toInt()
+							}
+							DBFDataType.LOGICAL -> {
+								txtVal.toBoolean()
+							}
+							else -> {
+								throw IOException("不支持修改的数据类型：$fieldType")
+							}
+						}
+					}
+				}
+
+				dbfWrapper.records[recNo][fieldInd] = anyValue
+			}
+		)
 		extraInfos = arrayOfNulls(fieldCount)
 		customActions = arrayOfNulls(fieldCount)
 
 		dataRecordItem = (0 until fieldCount).map { i ->
 			DataRecordItem(i)
 		}
+	}
+
+	class FieldValueAccessor(
+		private val getter: (fieldInd: Int) -> String,
+		private val setter: (fieldInd: Int, fieldValue: String) -> Unit
+	) {
+		operator fun get(fieldInd: Int) = getter(fieldInd)
+		operator fun set(fieldInd: Int, fieldValue: String) = setter(fieldInd, fieldValue)
 	}
 
 	fun setExtraInfos(fieldName: String, value: String) {
