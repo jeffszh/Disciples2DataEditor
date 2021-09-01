@@ -1,6 +1,5 @@
 package cn.jeff.app.d2de
 
-import cn.jeff.app.d2de.data.DataRecord
 import cn.jeff.app.d2de.data.MainData
 import cn.jeff.app.d2de.data.UnitIdAndName
 import javafx.event.ActionEvent
@@ -71,8 +70,13 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		unitIdAndName ?: return
 		val mainData = mainData
 		mainData ?: return
-		val recNo = mainData.unitsDbf.find("UNIT_ID", unitIdAndName.unitId)
-		val unitRecord = DataRecord(mainData.unitsDbf, recNo)
+		val unitRecord = mainData.createUnitRecord(unitIdAndName.unitId)
+		unitRecord.setCustomAction("ATTACK_ID") {
+			information("打开AttackId")
+		}
+		unitRecord.setCustomAction("ATTACK2_ID") {
+			information("攻击2")
+		}
 		unitRecord.attachToTableView(j.mainTableView)
 		j.btnSave.enableWhen(unitRecord.changedProperty)
 	}

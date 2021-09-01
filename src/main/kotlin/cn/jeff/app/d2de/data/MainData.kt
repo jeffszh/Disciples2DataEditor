@@ -4,8 +4,8 @@ import tornadofx.*
 
 class MainData(dbfDirectory: String) {
 
-	val globalTextDbf = DbfWrapper("$dbfDirectory/Tglobal.dbf")
-	val unitsDbf = DbfWrapper("$dbfDirectory/Gunits.dbf")
+	private val globalTextDbf = DbfWrapper("$dbfDirectory/Tglobal.dbf")
+	private val unitsDbf = DbfWrapper("$dbfDirectory/Gunits.dbf")
 	val unitList = observableList<UnitIdAndName>()
 
 	init {
@@ -21,6 +21,24 @@ class MainData(dbfDirectory: String) {
 				UnitIdAndName(unitId, unitName)
 			)
 		}
+	}
+
+	private val unitRecordLookupFields = listOf(
+		"NAME_TXT", "DESC_TXT", "ABIL_TXT"
+	)
+
+	fun createUnitRecord(unitId: String): DataRecord {
+		val recNo = unitsDbf.find("UNIT_ID", unitId)
+		val unitRecord = DataRecord(unitsDbf, recNo)
+		for (unitRecordLookupField in unitRecordLookupFields) {
+			val txtNo = globalTextDbf.find(
+				"TXT_ID", unitsDbf[recNo, unitRecordLookupField]
+			)
+			unitRecord.setExtraInfos(
+				unitRecordLookupField, globalTextDbf[txtNo, "TEXT"].toString()
+			)
+		}
+		return unitRecord
 	}
 
 }
