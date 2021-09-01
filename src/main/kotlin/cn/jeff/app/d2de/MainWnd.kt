@@ -1,6 +1,8 @@
 package cn.jeff.app.d2de
 
+import cn.jeff.app.d2de.data.DataRecord
 import cn.jeff.app.d2de.data.MainData
+import cn.jeff.app.d2de.data.UnitIdAndName
 import javafx.event.ActionEvent
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane
@@ -36,6 +38,10 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 				}
 			}
 		}
+
+		j.lvUnitName.selectionModel.selectedItemProperty().addListener { _, _, new ->
+			reloadMainTableView(new)
+		}
 	}
 
 	fun btnClick(actionEvent: ActionEvent) {
@@ -57,6 +63,18 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		mainData = MainData(StaticVars.appConfig.defaultDirectory).also {
 			j.lvUnitName.items = it.unitList
 		}
+	}
+
+	private fun reloadMainTableView(unitIdAndName: UnitIdAndName?) {
+		j.mainTableView.columns.clear()
+		j.mainTableView.items = null
+		unitIdAndName ?: return
+		val mainData = mainData
+		mainData ?: return
+		val recNo = mainData.unitsDbf.find("UNIT_ID", unitIdAndName.unitId)
+		val unitRecord = DataRecord(mainData.unitsDbf, recNo)
+		unitRecord.attachToTableView(j.mainTableView)
+		j.btnSave.enableWhen(unitRecord.changedProperty)
 	}
 
 }

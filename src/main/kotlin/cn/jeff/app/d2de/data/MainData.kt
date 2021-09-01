@@ -4,9 +4,9 @@ import tornadofx.*
 
 class MainData(dbfDirectory: String) {
 
-	private val globalTextDbf = DbfWrapper("$dbfDirectory/Tglobal.dbf")
-	private val unitsDbf = DbfWrapper("$dbfDirectory/Gunits.dbf")
-	val unitList = observableList<GameUnit>()
+	val globalTextDbf = DbfWrapper("$dbfDirectory/Tglobal.dbf")
+	val unitsDbf = DbfWrapper("$dbfDirectory/Gunits.dbf")
+	val unitList = observableList<UnitIdAndName>()
 
 	init {
 		for (i in 0 until unitsDbf.recordCount) {
@@ -18,10 +18,7 @@ class MainData(dbfDirectory: String) {
 			else
 				globalTextDbf[nameIndex, "TEXT"].toString()
 			unitList.add(
-				GameUnit().also {
-					it.unitId = unitId
-					it.unitName = unitName
-				}
+				UnitIdAndName(unitId, unitName)
 			)
 		}
 	}

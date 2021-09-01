@@ -12,8 +12,8 @@ import java.nio.charset.Charset
 
 class DbfWrapper(private val dbfFilename: String) {
 
-	private val fields: List<DBFField>
-	private val records: ObservableList<Array<Any?>>
+	val fields: List<DBFField>
+	val records: ObservableList<Array<Any?>>
 	private val defaultCharset = Charset.forName(StaticVars.appConfig.defaultCharset)
 
 	init {
@@ -58,6 +58,7 @@ class DbfWrapper(private val dbfFilename: String) {
 	}
 
 	val recordCount get() = records.count()
+	val fieldCount get() = fields.count()
 
 	fun find(fieldName: String, fieldValue: Any?): Int {
 		val fieldIndex = fields.indexOfFirst {
