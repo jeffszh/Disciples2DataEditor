@@ -72,13 +72,17 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		mainData ?: return
 		val unitRecord = mainData.createUnitRecord(unitIdAndName.unitId)
 		unitRecord.setCustomAction("ATTACK_ID") {
-			information("打开AttackId")
+			information("打开AttackId: $it")
 		}
 		unitRecord.setCustomAction("ATTACK2_ID") {
-			information("攻击2")
+			information("攻击2: $it")
 		}
 		unitRecord.attachToTableView(j.mainTableView)
 		j.btnSave.enableWhen(unitRecord.changedProperty)
+		j.btnSave.action {
+			unitRecord.saveDbf()
+			unitRecord.changedProperty.value = false
+		}
 	}
 
 }

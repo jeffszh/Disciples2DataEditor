@@ -1,7 +1,6 @@
 package cn.jeff.app.d2de.data
 
 import com.linuxense.javadbf.DBFDataType
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableView
 import tornadofx.*
@@ -12,9 +11,9 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 	private val fieldNames: List<String>
 	private val fieldValues: FieldValueAccessor
 	private val extraInfos: Array<String?>
-	private val customActions: Array<(() -> Unit)?>
+	private val customActions: Array<((String) -> Unit)?>
 	private val dataRecordItem: List<DataRecordItem>
-	val changedProperty = SimpleBooleanProperty(false)
+	val changedProperty get() = dbfWrapper.changedProperty
 
 	init {
 		val fieldCount = dbfWrapper.fieldCount
@@ -65,7 +64,7 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 		}
 	}
 
-	class FieldValueAccessor(
+	private class FieldValueAccessor(
 		private val getter: (fieldInd: Int) -> String,
 		private val setter: (fieldInd: Int, fieldValue: String) -> Unit
 	) {
@@ -78,9 +77,13 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 		extraInfos[fieldIndex] = value
 	}
 
-	fun setCustomAction(fieldName: String, action: () -> Unit) {
+	fun setCustomAction(fieldName: String, action: (fieldTextValue: String) -> Unit) {
 		val fieldIndex = fieldNames.indexOf(fieldName)
 		customActions[fieldIndex] = action
+	}
+
+	fun saveDbf() {
+		dbfWrapper.saveDbf()
 	}
 
 	fun attachToTableView(tableView: TableView<DataRecordItem>) {
@@ -107,7 +110,7 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 		val customAction get() = customActions[fieldIndex]
 	}
 
-	private class ButtonCell : TableCell<DataRecordItem, (() -> Unit)?>() {
+	private inner class ButtonCell : TableCell<DataRecordItem, ((String) -> Unit)?>() {
 		private var currentIndex = -1
 
 		override fun updateIndex(i: Int) {
@@ -115,14 +118,14 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 			currentIndex = i
 		}
 
-		override fun updateItem(item: (() -> Unit)?, empty: Boolean) {
+		override fun updateItem(item: ((String) -> Unit)?, empty: Boolean) {
 			super.updateItem(item, empty)
 			graphic = if (empty || item == null) {
 				null
 			} else {
 				button("打开详情") {
 					action {
-						item()
+						item(fieldValues[currentIndex])
 					}
 				}
 			}

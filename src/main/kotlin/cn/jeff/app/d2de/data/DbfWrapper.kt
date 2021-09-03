@@ -4,8 +4,7 @@ import cn.jeff.app.d2de.StaticVars
 import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
 import com.linuxense.javadbf.DBFWriter
-import javafx.collections.ObservableList
-import tornadofx.*
+import javafx.beans.property.SimpleBooleanProperty
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.charset.Charset
@@ -13,8 +12,9 @@ import java.nio.charset.Charset
 class DbfWrapper(private val dbfFilename: String) {
 
 	val fields: List<DBFField>
-	val records: ObservableList<Array<Any?>>
+	val records: List<Array<Any?>>
 	private val defaultCharset = Charset.forName(StaticVars.appConfig.defaultCharset)
+	val changedProperty = SimpleBooleanProperty(false)
 
 	init {
 		FileInputStream(dbfFilename).use { fis ->
@@ -24,12 +24,13 @@ class DbfWrapper(private val dbfFilename: String) {
 				}
 				records = (0 until reader.recordCount).map {
 					reader.nextRecord() ?: arrayOfNulls(reader.fieldCount)
-				}.observable()
+				}
 			}
 		}
 	}
 
-	private fun saveDbf() {
+	fun saveDbf() {
+		println("写入......")
 		DBFWriter(FileOutputStream(dbfFilename), defaultCharset).use { writer ->
 			writer.setFields(fields.toTypedArray())
 			records.forEach { record ->
@@ -41,6 +42,7 @@ class DbfWrapper(private val dbfFilename: String) {
 //				writer.addRecord(record)
 			}
 		}
+		println("写入完毕。")
 	}
 
 	operator fun get(recNo: Int, fieldName: String): Any? {
