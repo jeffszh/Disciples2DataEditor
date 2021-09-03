@@ -12,7 +12,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 
 	override val root: BorderPane
 	private val j: MainWndJ
-	private var mainData: MainData? = null
+	var mainData: MainData? = null
 
 	init {
 		primaryStage.isResizable = true
@@ -72,10 +72,10 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		mainData ?: return
 		val unitRecord = mainData.createUnitRecord(unitIdAndName.unitId)
 		unitRecord.setCustomAction("ATTACK_ID") {
-			information("打开AttackId: $it")
+			EditAttackWnd(it).openWindow()
 		}
 		unitRecord.setCustomAction("ATTACK2_ID") {
-			information("攻击2: $it")
+			EditAttackWnd(it).openWindow()
 		}
 		unitRecord.attachToTableView(j.mainTableView)
 		j.btnSave.enableWhen(unitRecord.changedProperty)

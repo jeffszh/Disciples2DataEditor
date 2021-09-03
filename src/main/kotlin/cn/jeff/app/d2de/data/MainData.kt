@@ -6,6 +6,7 @@ class MainData(dbfDirectory: String) {
 
 	private val globalTextDbf = DbfWrapper("$dbfDirectory/Tglobal.dbf")
 	private val unitsDbf = DbfWrapper("$dbfDirectory/Gunits.dbf")
+	private val attackDbf = DbfWrapper("$dbfDirectory/Gattacks.dbf")
 	val unitList = observableList<UnitIdAndName>()
 
 	init {
@@ -23,22 +24,31 @@ class MainData(dbfDirectory: String) {
 		}
 	}
 
-	private val unitRecordLookupFields = listOf(
-		"NAME_TXT", "DESC_TXT", "ABIL_TXT"
-	)
-
-	fun createUnitRecord(unitId: String): DataRecord {
-		val recNo = unitsDbf.find("UNIT_ID", unitId)
-		val unitRecord = DataRecord(unitsDbf, recNo)
-		for (unitRecordLookupField in unitRecordLookupFields) {
-			val txtNo = globalTextDbf.find(
-				"TXT_ID", unitsDbf[recNo, unitRecordLookupField]
-			)
-			unitRecord.setExtraInfos(
-				unitRecordLookupField, globalTextDbf[txtNo, "TEXT"].toString()
-			)
+	private fun createDataRecord(
+		dbf: DbfWrapper, key: String, keyValue: String,
+		lookupFields: List<String>
+	): DataRecord {
+		val recNo = dbf.find(key, keyValue)
+		val record = DataRecord(dbf, recNo)
+		for (lookupField in lookupFields) {
+			val txtNo = globalTextDbf.find("TXT_ID", dbf[recNo, lookupField])
+			record.setExtraInfos(lookupField, globalTextDbf[txtNo, "TEXT"].toString())
 		}
-		return unitRecord
+		return record
 	}
+
+	fun createUnitRecord(unitId: String): DataRecord =
+		createDataRecord(
+			unitsDbf, "UNIT_ID", unitId, listOf(
+				"NAME_TXT", "DESC_TXT", "ABIL_TXT"
+			)
+		)
+
+	fun createAttackRecord(attackId: String): DataRecord =
+		createDataRecord(
+			attackDbf, "ATT_ID", attackId, listOf(
+				"NAME_TXT", "DESC_TXT"
+			)
+		)
 
 }
