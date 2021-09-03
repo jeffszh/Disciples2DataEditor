@@ -1,6 +1,7 @@
 package cn.jeff.app.d2de
 
 import cn.jeff.app.d2de.data.DataRecord
+import javafx.scene.layout.Priority
 import tornadofx.*
 
 abstract class EditRecordWnd(title: String) : View(title) {
@@ -26,6 +27,7 @@ abstract class EditRecordWnd(title: String) : View(title) {
 			}
 		}
 		tableview<DataRecord.DataRecordItem> {
+			vgrow = Priority.ALWAYS
 			dataRecord.attachToTableView(this)
 		}
 	}
