@@ -13,6 +13,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 	override val root: BorderPane
 	private val j: MainWndJ
 	var mainData: MainData? = null
+		private set
 
 	init {
 		primaryStage.isResizable = true
@@ -76,6 +77,15 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		}
 		unitRecord.setCustomAction("ATTACK2_ID") {
 			EditAttackWnd(it).openWindow()
+		}
+		unitRecord.setCustomAction("RACE_ID") {
+			EditRaceWnd(it).openWindow()
+		}
+		unitRecord.setCustomAction("DYN_UPG1") {
+			EditDynUpgradeWnd(it).openWindow()
+		}
+		unitRecord.setCustomAction("DYN_UPG2") {
+			EditDynUpgradeWnd(it).openWindow()
 		}
 		unitRecord.attachToTableView(j.mainTableView)
 		j.btnSave.enableWhen(unitRecord.changedProperty)
