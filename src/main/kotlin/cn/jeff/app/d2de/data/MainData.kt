@@ -1,6 +1,7 @@
 package cn.jeff.app.d2de.data
 
 import tornadofx.*
+import java.lang.Exception
 
 class MainData(dbfDirectory: String) {
 
@@ -33,23 +34,32 @@ class MainData(dbfDirectory: String) {
 		val recNo = dbf.find(key, keyValue)
 		val record = DataRecord(dbf, recNo)
 		for (lookupField in lookupFields) {
-			val fieldValue = dbf[recNo, lookupField]
-			if (fieldValue.toString().isNotBlank() &&
-				fieldValue.toString() != "g000000000"
-			) {
-				val txtId = if (fieldValue.toString().substring(4, 6) == "uu") {
-					val unitRecNo = unitsDbf.find("UNIT_ID", fieldValue)
-					if (unitRecNo >= 0) unitsDbf[unitRecNo, "NAME_TXT"] else fieldValue
-				} else {
-					fieldValue
+			record.setExtraInfos(lookupField) { value ->
+				try {
+					if (value.isNotBlank() && value != "g000000000" && value.length == 10) {
+						val txtId = if (value.substring(4, 6) == "uu") {
+							val unitRecNo = unitsDbf.find("UNIT_ID", value)
+							if (unitRecNo >= 0) unitsDbf[unitRecNo, "NAME_TXT"] else value
+						} else {
+							value
+						}
+						val txtNo = globalTextDbf.find("TXT_ID", txtId)
+						// println("$txtId ----------------> $txtNo")
+						globalTextDbf[txtNo, "TEXT"].toString()
+					} else {
+						null
+					}
+				} catch (e: Exception) {
+					e.printStackTrace()
+					"異常：${e.message}"
 				}
-				val txtNo = globalTextDbf.find("TXT_ID", txtId)
-				println("------- $txtId | $txtNo -------")
-				record.setExtraInfos(lookupField, globalTextDbf[txtNo, "TEXT"].toString())
 			}
 		}
 		return record
 	}
+
+//	private fun setEnumFields(vararg enumDef: Pair<String, List<String>>) {
+//	}
 
 	fun createUnitRecord(unitId: String) =
 		createDataRecord(

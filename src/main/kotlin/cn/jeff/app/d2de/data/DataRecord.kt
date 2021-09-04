@@ -1,6 +1,7 @@
 package cn.jeff.app.d2de.data
 
 import com.linuxense.javadbf.DBFDataType
+import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableView
 import tornadofx.*
@@ -10,10 +11,11 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 
 	private val fieldNames: List<String>
 	private val fieldValues: FieldValueAccessor
-	private val extraInfos: Array<String?>
+	private val extraInfos: Array<((String) -> String?)?>
 	private val customActions: Array<((String) -> Unit)?>
 	private val dataRecordItem: List<DataRecordItem>
 	val changedProperty get() = dbfWrapper.changedProperty
+	private var tableView: TableView<DataRecordItem>? = null
 
 	init {
 		val fieldCount = dbfWrapper.fieldCount
@@ -72,9 +74,9 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 		operator fun set(fieldInd: Int, fieldValue: String) = setter(fieldInd, fieldValue)
 	}
 
-	fun setExtraInfos(fieldName: String, value: String) {
+	fun setExtraInfos(fieldName: String, extraInfoProvider: (String) -> String?) {
 		val fieldIndex = fieldNames.indexOf(fieldName)
-		extraInfos[fieldIndex] = value
+		extraInfos[fieldIndex] = extraInfoProvider
 	}
 
 	fun setCustomAction(fieldName: String, action: (fieldTextValue: String) -> Unit) {
@@ -89,10 +91,18 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 	}
 
 	fun attachToTableView(tableView: TableView<DataRecordItem>) {
+		this.tableView = tableView
 		with(tableView) {
 			readonlyColumn("名称", DataRecordItem::fieldName)
 			column("数值", DataRecordItem::fieldValue).makeEditable()
-			readonlyColumn("详情", DataRecordItem::extraInfo) {
+//			readonlyColumn("详情", DataRecordItem::extraInfo) {
+//				prefWidth = 500.0
+//				maxWidth = 1500.0
+//				enableTextWrap()
+//			}
+			column<DataRecordItem, String>("詳情") {
+				ReadOnlyObjectWrapper(it.value.extraInfo?.invoke(it.value.fieldValue))
+			}.apply {
 				prefWidth = 500.0
 				maxWidth = 1500.0
 				enableTextWrap()
@@ -111,6 +121,7 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 			set(value) {
 				fieldValues[fieldIndex] = value
 				changedProperty.value = true
+				tableView?.refresh()
 			}
 		val extraInfo get() = extraInfos[fieldIndex]
 		val customAction get() = customActions[fieldIndex]
