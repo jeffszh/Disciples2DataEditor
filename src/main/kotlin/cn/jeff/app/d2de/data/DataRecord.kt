@@ -79,7 +79,9 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 
 	fun setCustomAction(fieldName: String, action: (fieldTextValue: String) -> Unit) {
 		val fieldIndex = fieldNames.indexOf(fieldName)
-		customActions[fieldIndex] = action
+		if (fieldValues[fieldIndex] != "g000000000") {
+			customActions[fieldIndex] = action
+		}
 	}
 
 	fun saveDbf() {

@@ -33,19 +33,31 @@ class MainData(dbfDirectory: String) {
 		val recNo = dbf.find(key, keyValue)
 		val record = DataRecord(dbf, recNo)
 		for (lookupField in lookupFields) {
-			val txtNo = globalTextDbf.find("TXT_ID", dbf[recNo, lookupField])
-			record.setExtraInfos(lookupField, globalTextDbf[txtNo, "TEXT"].toString())
+			val fieldValue = dbf[recNo, lookupField]
+			if (fieldValue.toString().isNotBlank() &&
+				fieldValue.toString() != "g000000000"
+			) {
+				val txtId = if (fieldValue.toString().substring(4, 6) == "uu") {
+					val unitRecNo = unitsDbf.find("UNIT_ID", fieldValue)
+					if (unitRecNo >= 0) unitsDbf[unitRecNo, "NAME_TXT"] else fieldValue
+				} else {
+					fieldValue
+				}
+				val txtNo = globalTextDbf.find("TXT_ID", txtId)
+				println("------- $txtId | $txtNo -------")
+				record.setExtraInfos(lookupField, globalTextDbf[txtNo, "TEXT"].toString())
+			}
 		}
 		return record
 	}
 
-	fun createUnitRecord(unitId: String): DataRecord =
+	fun createUnitRecord(unitId: String) =
 		createDataRecord(
 			unitsDbf, "UNIT_ID", unitId,
-			"NAME_TXT", "DESC_TXT", "ABIL_TXT"
+			"NAME_TXT", "DESC_TXT", "ABIL_TXT", "PREV_ID"
 		)
 
-	fun createAttackRecord(attackId: String): DataRecord =
+	fun createAttackRecord(attackId: String) =
 		createDataRecord(
 			attackDbf, "ATT_ID", attackId,
 			"NAME_TXT", "DESC_TXT"
@@ -54,7 +66,10 @@ class MainData(dbfDirectory: String) {
 	fun createRaceRecord(raceId: String) =
 		createDataRecord(
 			raceDbf, "RACE_ID", raceId,
-			"NAME_TXT"
+			"NAME_TXT",
+			"GUARDIAN", "NOBLE",
+			"LEADER_1", "LEADER_2", "LEADER_3", "LEADER_4",
+			"SOLDIER_1", "SOLDIER_2", "SOLDIER_3", "SOLDIER_4", "SOLDIER_5",
 		)
 
 	fun createDynUpgradeRecord(dynUpgradeId: String) =
