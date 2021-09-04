@@ -58,8 +58,29 @@ class MainData(dbfDirectory: String) {
 		return record
 	}
 
-//	private fun setEnumFields(vararg enumDef: Pair<String, List<String>>) {
-//	}
+	private val attackSourceList = listOf(
+		"武器", "意念", "生命", "死系", "火系", "水系", "地系", "氣系"
+	)
+
+	private val attackReachList = listOf(
+		"-", "全體", "遠程", "近戰"
+	)
+
+	private fun DataRecord.setEnumFields(vararg enumDef: Pair<String, List<String>>): DataRecord {
+		enumDef.forEach { (fieldName, enumTextList) ->
+			setExtraInfos(fieldName) { value ->
+				val intValue = value.toDoubleOrNull()?.toInt()
+				intValue?.let {
+					if (intValue in enumTextList.indices) {
+						enumTextList[intValue]
+					} else {
+						null
+					}
+				}
+			}
+		}
+		return this
+	}
 
 	fun createUnitRecord(unitId: String) =
 		createDataRecord(
@@ -71,6 +92,9 @@ class MainData(dbfDirectory: String) {
 		createDataRecord(
 			attackDbf, "ATT_ID", attackId,
 			"NAME_TXT", "DESC_TXT"
+		).setEnumFields(
+			"SOURCE" to attackSourceList,
+			"REACH" to attackReachList,
 		)
 
 	fun createRaceRecord(raceId: String) =

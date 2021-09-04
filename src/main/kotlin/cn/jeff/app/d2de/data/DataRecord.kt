@@ -95,11 +95,6 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 		with(tableView) {
 			readonlyColumn("名称", DataRecordItem::fieldName)
 			column("数值", DataRecordItem::fieldValue).makeEditable()
-//			readonlyColumn("详情", DataRecordItem::extraInfo) {
-//				prefWidth = 500.0
-//				maxWidth = 1500.0
-//				enableTextWrap()
-//			}
 			column<DataRecordItem, String>("詳情") {
 				ReadOnlyObjectWrapper(it.value.extraInfo?.invoke(it.value.fieldValue))
 			}.apply {
