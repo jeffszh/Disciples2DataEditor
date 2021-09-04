@@ -4,9 +4,7 @@ import cn.jeff.app.d2de.data.DataRecord
 import javafx.scene.layout.Priority
 import tornadofx.*
 
-abstract class EditRecordWnd(title: String) : View(title) {
-
-	abstract val dataRecord: DataRecord
+open class EditRecordWnd(title: String, private val dataRecord: DataRecord) : View(title) {
 
 	override val root = vbox {
 		style = "-fx-font-family: 'Courier New'; -fx-font-size: 16;"
@@ -14,9 +12,7 @@ abstract class EditRecordWnd(title: String) : View(title) {
 		prefHeight = 580.0
 		spacing = 10.0
 		paddingAll = 10.0
-	}
 
-	fun continueInit() {
 		button("保存修改") {
 			enableWhen {
 				dataRecord.changedProperty
