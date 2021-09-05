@@ -66,6 +66,31 @@ class MainData(dbfDirectory: String) {
 		"-", "全體", "遠程", "近戰"
 	)
 
+	private val attackClassList = listOf(
+		"-",
+		"一般",
+		"吸血",
+		"麻痺",
+		"保留", "保留",
+		"治療",
+		"逼退",
+		"增強攻擊力",
+		"石化",
+		"降低攻擊力",
+		"降低敏捷",
+		"放毒",
+		"凍傷",
+		"復活",
+		"吸血治療",
+		"恢復",
+		"召喚",
+		"降級",
+		"再次行動",
+		"模仿變形",
+		"自我變形",
+		"變形",
+	)
+
 	private fun DataRecord.setEnumFields(vararg enumDef: Pair<String, List<String>>): DataRecord {
 		enumDef.forEach { (fieldName, enumTextList) ->
 			setExtraInfos(fieldName) { value ->
@@ -95,6 +120,7 @@ class MainData(dbfDirectory: String) {
 		).setEnumFields(
 			"SOURCE" to attackSourceList,
 			"REACH" to attackReachList,
+			"CLASS" to attackClassList,
 		)
 
 	fun createRaceRecord(raceId: String) =
