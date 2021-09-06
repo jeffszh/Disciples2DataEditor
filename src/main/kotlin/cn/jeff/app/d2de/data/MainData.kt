@@ -11,7 +11,7 @@ class MainData(dbfDirectory: String) {
 	private val raceDbf = DbfWrapper("$dbfDirectory/Grace.dbf")
 	private val dynUpgradeDbf = DbfWrapper("$dbfDirectory/GDynUpgr.dbf")
 	private val artifactsDbf = DbfWrapper("$dbfDirectory/GItem.DBF")
-	val unitList = observableList<UnitIdAndName>()
+	val unitList = observableList<IdAndName>()
 
 	init {
 		for (i in 0 until unitsDbf.recordCount) {
@@ -23,7 +23,7 @@ class MainData(dbfDirectory: String) {
 			else
 				globalTextDbf[nameIndex, "TEXT"].toString()
 			unitList.add(
-				UnitIdAndName(unitId, unitName)
+				IdAndName(unitId, unitName)
 			)
 		}
 	}

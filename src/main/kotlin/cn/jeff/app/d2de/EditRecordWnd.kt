@@ -8,8 +8,8 @@ open class EditRecordWnd(title: String, private val dataRecord: DataRecord) : Vi
 
 	override val root = vbox {
 		style = "-fx-font-family: 'Courier New'; -fx-font-size: 16;"
-		prefWidth = 780.0
-		prefHeight = 580.0
+		prefWidth = 800.0
+		prefHeight = 600.0
 		spacing = 10.0
 		paddingAll = 10.0
 

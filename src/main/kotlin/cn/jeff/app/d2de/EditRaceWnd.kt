@@ -4,5 +4,5 @@ import tornadofx.*
 
 class EditRaceWnd(raceId: String) : EditRecordWnd(
 	"編輯種族",
-	find<MainFragment>().mainData!!.createRaceRecord(raceId)
+	find<MainWnd>().mainData.createRaceRecord(raceId)
 )

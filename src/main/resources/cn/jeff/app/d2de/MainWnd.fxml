@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="768.0" prefWidth="1024.0"
+			style="-fx-font-family: 'Courier New'; -fx-font-size: 16;"
+			xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+			fx:controller="cn.jeff.app.d2de.MainWndJ">
+	<top>
+		<FlowPane alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+			<Button mnemonicParsing="false" onAction="#onBtnOpenClick" text="打开"/>
+			<padding>
+				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+			</padding>
+		</FlowPane>
+	</top>
+	<center>
+		<TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE"/>
+	</center>
+</BorderPane>
