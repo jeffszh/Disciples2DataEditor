@@ -11,22 +11,36 @@ class MainData(dbfDirectory: String) {
 	private val raceDbf = DbfWrapper("$dbfDirectory/Grace.dbf")
 	private val dynUpgradeDbf = DbfWrapper("$dbfDirectory/GDynUpgr.dbf")
 	private val artifactsDbf = DbfWrapper("$dbfDirectory/GItem.DBF")
-	val unitList = observableList<IdAndName>()
+	val unitList = createIndexList(unitsDbf, "UNIT_ID")
+	val artifactsList = createIndexList(artifactsDbf, "ITEM_ID")
 
-	init {
-		for (i in 0 until unitsDbf.recordCount) {
-			val unitId = unitsDbf[i, "UNIT_ID"].toString()
-			val nameTxtId = unitsDbf[i, "NAME_TXT"].toString()
-			val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
-			val unitName = if (nameIndex < 0)
-				"没找到！"
-			else
-				globalTextDbf[nameIndex, "TEXT"].toString()
-			unitList.add(
-				IdAndName(unitId, unitName)
-			)
-		}
-	}
+	private fun createIndexList(
+		dbf: DbfWrapper, idFieldName: String, nameFieldName: String = "NAME_TXT"
+	) = (0 until dbf.recordCount).map { i ->
+		val id = dbf[i, idFieldName].toString()
+		val nameTxtId = dbf[i, nameFieldName].toString()
+		val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
+		val name = if (nameIndex < 0)
+			"没找到！"
+		else
+			globalTextDbf[nameIndex, "TEXT"].toString()
+		IdAndName(id, name)
+	}.observable()
+
+//	init {
+//		for (i in 0 until unitsDbf.recordCount) {
+//			val unitId = unitsDbf[i, "UNIT_ID"].toString()
+//			val nameTxtId = unitsDbf[i, "NAME_TXT"].toString()
+//			val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
+//			val unitName = if (nameIndex < 0)
+//				"没找到！"
+//			else
+//				globalTextDbf[nameIndex, "TEXT"].toString()
+//			unitList.add(
+//				IdAndName(unitId, unitName)
+//			)
+//		}
+//	}
 
 	private fun createDataRecord(
 		dbf: DbfWrapper, key: String, keyValue: String,
@@ -139,6 +153,7 @@ class MainData(dbfDirectory: String) {
 	fun createArtifactsRecord(itemId: String) =
 		createDataRecord(
 			artifactsDbf, "ITEM_ID", itemId,
+			"NAME_TXT", "DESC_TXT"
 		)
 
 }

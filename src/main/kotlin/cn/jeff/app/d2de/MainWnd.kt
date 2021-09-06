@@ -62,6 +62,14 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 				}
 			}
 		).text = "兵种（unit）"
+
+		j.mainTabPane.tab(
+			MainFragment(mainData.artifactsList, MainData::createArtifactsRecord) {
+				setCustomAction("ATTACK_ID") {
+					EditAttackWnd(it).openWindow()
+				}
+			}
+		).text = "物品（item）"
 	}
 
 }

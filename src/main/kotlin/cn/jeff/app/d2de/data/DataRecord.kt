@@ -81,7 +81,8 @@ class DataRecord(private val dbfWrapper: DbfWrapper, private val recNo: Int) {
 
 	fun setCustomAction(fieldName: String, action: (fieldTextValue: String) -> Unit) {
 		val fieldIndex = fieldNames.indexOf(fieldName)
-		if (fieldValues[fieldIndex] != "g000000000") {
+		val fieldValue = fieldValues[fieldIndex]
+		if (fieldValue.isNotBlank() && fieldValue != "g000000000") {
 			customActions[fieldIndex] = action
 		}
 	}
