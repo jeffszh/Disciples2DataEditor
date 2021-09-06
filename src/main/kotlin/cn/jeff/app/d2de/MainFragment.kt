@@ -8,10 +8,10 @@ import javafx.scene.layout.BorderPane
 import tornadofx.*
 import java.io.File
 
-class MainWnd : View("圣战群英传2数据编辑器") {
+class MainFragment : View("圣战群英传2数据编辑器") {
 
 	override val root: BorderPane
-	private val j: MainWndJ
+	private val j: MainFragmentJ
 	var mainData: MainData? = null
 		private set
 
@@ -21,7 +21,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		val loader = FXMLLoader()
 		root = loader.load(
 			javaClass.getResourceAsStream(
-				"MainWnd.fxml"
+				"MainFragment.fxml"
 			)
 		)
 		j = loader.getController()

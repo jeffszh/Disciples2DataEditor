@@ -5,5 +5,5 @@ import tornadofx.*
 class EditAttackWnd(attackId: String) :
 	EditRecordWnd(
 		"编辑攻击",
-		find(MainWnd::class).mainData!!.createAttackRecord(attackId)
+		find(MainFragment::class).mainData!!.createAttackRecord(attackId)
 	)

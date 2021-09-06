@@ -8,9 +8,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-public class MainWndJ {
+public class MainFragmentJ {
 
-	public MainWnd k;
+	public MainFragment k;
 	public Button btnOpen;
 	public Button btnSave;
 	public TextField tfUnitNameFilter;

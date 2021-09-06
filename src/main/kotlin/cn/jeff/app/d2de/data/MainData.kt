@@ -10,6 +10,7 @@ class MainData(dbfDirectory: String) {
 	private val attackDbf = DbfWrapper("$dbfDirectory/Gattacks.dbf")
 	private val raceDbf = DbfWrapper("$dbfDirectory/Grace.dbf")
 	private val dynUpgradeDbf = DbfWrapper("$dbfDirectory/GDynUpgr.dbf")
+	private val artifactsDbf = DbfWrapper("$dbfDirectory/GItem.DBF")
 	val unitList = observableList<UnitIdAndName>()
 
 	init {
@@ -134,5 +135,10 @@ class MainData(dbfDirectory: String) {
 
 	fun createDynUpgradeRecord(dynUpgradeId: String) =
 		createDataRecord(dynUpgradeDbf, "UPGRADE_ID", dynUpgradeId)
+
+	fun createArtifactsRecord(itemId: String) =
+		createDataRecord(
+			artifactsDbf, "ITEM_ID", itemId,
+		)
 
 }

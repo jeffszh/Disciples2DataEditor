@@ -7,7 +7,7 @@
 <BorderPane prefHeight="600.0" prefWidth="800.0"
 			style="-fx-font-family: 'Courier New'; -fx-font-size: 16;"
 			xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-			fx:controller="cn.jeff.app.d2de.MainWndJ">
+			fx:controller="cn.jeff.app.d2de.MainFragmentJ">
 	<top>
 		<FlowPane alignment="CENTER_LEFT" hgap="10.0" vgap="10.0" BorderPane.alignment="CENTER">
 			<padding>

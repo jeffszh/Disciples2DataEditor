@@ -4,5 +4,5 @@ import tornadofx.*
 
 class EditDynUpgradeWnd(dynUpgradeId: String) : EditRecordWnd(
 	"編輯升級設定",
-	find<MainWnd>().mainData!!.createDynUpgradeRecord(dynUpgradeId)
+	find<MainFragment>().mainData!!.createDynUpgradeRecord(dynUpgradeId)
 )
