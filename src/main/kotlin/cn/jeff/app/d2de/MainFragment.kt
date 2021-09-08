@@ -3,13 +3,9 @@ package cn.jeff.app.d2de
 import cn.jeff.app.d2de.data.DataRecord
 import cn.jeff.app.d2de.data.IdAndName
 import cn.jeff.app.d2de.data.MainData
-import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.RadioButton
-import javafx.scene.control.Toggle
-import javafx.scene.control.ToggleButton
 import javafx.scene.layout.BorderPane
 import tornadofx.*
 
@@ -22,6 +18,8 @@ class MainFragment(
 	override val root: BorderPane
 	private val j: MainFragmentJ
 	private val mainWnd: MainWnd by inject()
+	private val tgText get() = (j.tgLookupType.selectedToggle as RadioButton).text
+	private val tfText get() = j.tfFilter.text
 
 	init {
 		val loader = FXMLLoader()
@@ -32,23 +30,31 @@ class MainFragment(
 		)
 		j = loader.getController()
 
-		val lookupOp = Bindings.createObjectBinding({
-			val tg = j.tgLookupType.selectedToggle as RadioButton
-			tg to j.tfFilter.text
-		}, j.tgLookupType.selectedToggleProperty(), j.tfFilter.textProperty())
+//		val lookupOp = Bindings.createObjectBinding({
+//			val tg = j.tgLookupType.selectedToggle as RadioButton
+//			tg to j.tfFilter.text
+//		}, j.tgLookupType.selectedToggleProperty(), j.tfFilter.textProperty())
 
-		lookupOp.onChange {
-			println(it)
-		}
+//		j.tfFilter.textProperty().addListener { _, _, new ->
+//			if (new.isBlank()) {
+//				j.lvIndex.items = indexList
+//			} else {
+//				j.lvIndex.items = indexList.filtered {
+//					it.toString().contains(new, ignoreCase = true)
+//				}
+//			}
+//		}
 
-		j.tfFilter.textProperty().addListener { _, _, new ->
-			if (new.isBlank()) {
+		j.tgLookupType.selectedToggleProperty().onChange {
+			if (tgText == "定位") {
 				j.lvIndex.items = indexList
+				j.lvIndex.scrollTo(j.lvIndex.selectedItem)
 			} else {
-				j.lvIndex.items = indexList.filtered {
-					it.toString().contains(new, ignoreCase = true)
-				}
+				onLookupConditionChanged()
 			}
+		}
+		j.tfFilter.textProperty().onChange {
+			onLookupConditionChanged()
 		}
 
 		j.lvIndex.selectionModel.selectedItemProperty().addListener { _, _, new ->
@@ -61,6 +67,31 @@ class MainFragment(
 
 		// 创建时主动更新一次
 		onMainDataChanged()
+	}
+
+	private fun onLookupConditionChanged() {
+		when (tgText) {
+			"过滤" -> {
+				if (tfText.isBlank()) {
+					j.lvIndex.items = indexList
+				} else {
+					j.lvIndex.items = indexList.filtered {
+						it.toString().contains(tfText, ignoreCase = true)
+					}
+				}
+			}
+			"定位" -> {
+				j.lvIndex.items = indexList
+				if (tfText.isNotBlank()) {
+					val ind = j.lvIndex.items.indexOfFirst {
+						it.toString().contains(tfText, ignoreCase = true)
+					}
+					if (ind >= 0) {
+						j.lvIndex.selectionModel.select(ind)
+					}
+				}
+			}
+		}
 	}
 
 	private fun onMainDataChanged() {
