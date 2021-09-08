@@ -68,6 +68,12 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 				setCustomAction("ATTACK_ID") {
 					EditAttackWnd(it).openWindow()
 				}
+				setCustomAction("MOD_EQUIP") {
+					EditModiWnd(it).openWindow()
+				}
+				setCustomAction("MOD_POTION") {
+					EditModiWnd(it).openWindow()
+				}
 			}
 		).text = "物品（item）"
 	}
