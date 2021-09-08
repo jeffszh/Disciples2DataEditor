@@ -3,8 +3,13 @@ package cn.jeff.app.d2de
 import cn.jeff.app.d2de.data.DataRecord
 import cn.jeff.app.d2de.data.IdAndName
 import cn.jeff.app.d2de.data.MainData
+import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.fxml.FXMLLoader
+import javafx.scene.control.RadioButton
+import javafx.scene.control.Toggle
+import javafx.scene.control.ToggleButton
 import javafx.scene.layout.BorderPane
 import tornadofx.*
 
@@ -26,6 +31,15 @@ class MainFragment(
 			)
 		)
 		j = loader.getController()
+
+		val lookupOp = Bindings.createObjectBinding({
+			val tg = j.tgLookupType.selectedToggle as RadioButton
+			tg to j.tfFilter.text
+		}, j.tgLookupType.selectedToggleProperty(), j.tfFilter.textProperty())
+
+		lookupOp.onChange {
+			println(it)
+		}
 
 		j.tfFilter.textProperty().addListener { _, _, new ->
 			if (new.isBlank()) {
