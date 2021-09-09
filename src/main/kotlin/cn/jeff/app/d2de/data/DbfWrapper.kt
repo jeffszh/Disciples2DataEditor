@@ -71,4 +71,13 @@ class DbfWrapper(private val dbfFilename: String) {
 		}
 	}
 
+	fun findData(fieldName: String, fieldValue: Any?, dataName: String): Any? {
+		val recNo = find(fieldName, fieldValue)
+		return if (recNo >= 0) {
+			this[recNo, dataName]
+		} else {
+			null
+		}
+	}
+
 }

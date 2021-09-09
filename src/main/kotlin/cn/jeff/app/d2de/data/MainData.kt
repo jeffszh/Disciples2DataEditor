@@ -12,6 +12,7 @@ class MainData(dbfDirectory: String) {
 	private val dynUpgradeDbf = DbfWrapper("$dbfDirectory/GDynUpgr.dbf")
 	private val artifactsDbf = DbfWrapper("$dbfDirectory/GItem.DBF")
 	private val modiDbf = DbfWrapper("$dbfDirectory/GmodifL.dbf")
+	private val spellDbf = DbfWrapper("$dbfDirectory/Gspells.dbf")
 	val unitList = createIndexList(unitsDbf, "UNIT_ID")
 	val artifactsList = createIndexList(artifactsDbf, "ITEM_ID")
 
@@ -20,11 +21,13 @@ class MainData(dbfDirectory: String) {
 	) = (0 until dbf.recordCount).map { i ->
 		val id = dbf[i, idFieldName].toString()
 		val nameTxtId = dbf[i, nameFieldName].toString()
-		val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
-		val name = if (nameIndex < 0)
-			"没找到！"
-		else
-			globalTextDbf[nameIndex, "TEXT"].toString()
+//		val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
+//		val name = if (nameIndex < 0)
+//			"没找到！"
+//		else
+//			globalTextDbf[nameIndex, "TEXT"].toString()
+		val name = globalTextDbf.findData("TXT_ID", nameTxtId, "TEXT")
+			?.toString() ?: "没找到"
 		IdAndName(id, name)
 	}.observable()
 
@@ -52,16 +55,40 @@ class MainData(dbfDirectory: String) {
 		for (lookupField in lookupFields) {
 			record.setExtraInfos(lookupField) { value ->
 				try {
-					if (value.isNotBlank() && value != "g000000000" && value.length == 10) {
-						val txtId = if (value.substring(4, 6) == "uu") {
-							val unitRecNo = unitsDbf.find("UNIT_ID", value)
-							if (unitRecNo >= 0) unitsDbf[unitRecNo, "NAME_TXT"] else value
-						} else {
-							value
+					if (value.isNotBlank()
+						&& !value.equals("g000000000", true)
+						&& value.length == 10
+					) {
+						val txtId = when (value.substring(4, 6)) {
+							"uu" -> {
+								// val unitRecNo = unitsDbf.find("UNIT_ID", value)
+								// if (unitRecNo >= 0) unitsDbf[unitRecNo, "NAME_TXT"] else value
+								unitsDbf.findData("UNIT_ID", value, "NAME_TXT")
+									?: value
+							}
+							"rr" -> {
+								// val raceRecNo = raceDbf.find("RACE_ID", value)
+								// if (raceRecNo >= 0) raceDbf[raceRecNo, "NAME_TXT"] else value
+								raceDbf.findData("RACE_ID", value, "NAME_TXT")
+									?: value
+							}
+							"aa" -> {
+								attackDbf.findData("ATT_ID", value, "NAME_TXT")
+									?: value
+							}
+							"ss" -> {
+								spellDbf.findData("SPELL_ID", value, "NAME_TXT")
+									?: value
+							}
+							else -> {
+								value
+							}
 						}
-						val txtNo = globalTextDbf.find("TXT_ID", txtId)
-						// println("$txtId ----------------> $txtNo")
-						globalTextDbf[txtNo, "TEXT"].toString()
+//						val txtNo = globalTextDbf.find("TXT_ID", txtId)
+//						// println("$txtId ----------------> $txtNo")
+//						globalTextDbf[txtNo, "TEXT"].toString()
+						globalTextDbf.findData("TXT_ID", txtId, "TEXT")
+							?.toString()
 					} else {
 						null
 					}
@@ -126,7 +153,8 @@ class MainData(dbfDirectory: String) {
 	fun createUnitRecord(unitId: String) =
 		createDataRecord(
 			unitsDbf, "UNIT_ID", unitId,
-			"NAME_TXT", "DESC_TXT", "ABIL_TXT", "PREV_ID"
+			"NAME_TXT", "DESC_TXT", "ABIL_TXT", "PREV_ID",
+			"RACE_ID", "ATTACK_ID", "ATTACK2_ID", "BASE_UNIT"
 		)
 
 	fun createAttackRecord(attackId: String) =
@@ -154,7 +182,7 @@ class MainData(dbfDirectory: String) {
 	fun createArtifactsRecord(itemId: String) =
 		createDataRecord(
 			artifactsDbf, "ITEM_ID", itemId,
-			"NAME_TXT", "DESC_TXT"
+			"NAME_TXT", "DESC_TXT", "SPELL_ID", "ATTACK_ID", "UNIT_ID"
 		)
 
 	fun createModiRecord(modiId: String) =
