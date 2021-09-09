@@ -15,6 +15,7 @@ class MainData(dbfDirectory: String) {
 	private val spellDbf = DbfWrapper("$dbfDirectory/Gspells.dbf")
 	val unitList = createIndexList(unitsDbf, "UNIT_ID")
 	val artifactsList = createIndexList(artifactsDbf, "ITEM_ID")
+	val spellList = createIndexList(spellDbf, "SPELL_ID")
 
 	private fun createIndexList(
 		dbf: DbfWrapper, idFieldName: String, nameFieldName: String = "NAME_TXT"
@@ -189,6 +190,12 @@ class MainData(dbfDirectory: String) {
 		createDataRecord(
 			modiDbf, "BELONGS_TO", modiId,
 			"DESC"
+		)
+
+	fun createSpellRecord(spellId: String) =
+		createDataRecord(
+			spellDbf, "SPELL_ID", spellId,
+			"DESC_TXT", "UNIT_ID", "MODIF_TXT"
 		)
 
 }

@@ -65,6 +65,18 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		unitTab.text = "兵种（unit）"
 
 		j.mainTabPane.tab(
+			MainFragment(mainData.spellList, MainData::createSpellRecord) {
+				setCustomAction("MODIF_ID") {
+					EditModiWnd(it).openWindow()
+				}
+				setCustomAction("UNIT_ID") {
+					j.mainTabPane.selectionModel.select(unitTab)
+					unitFragment.tfText = it
+				}
+			}
+		).text = "魔法（spell）"
+
+		j.mainTabPane.tab(
 			MainFragment(mainData.artifactsList, MainData::createArtifactsRecord) {
 				setCustomAction("ATTACK_ID") {
 					EditAttackWnd(it).openWindow()
