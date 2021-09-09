@@ -88,6 +88,7 @@ class MainFragment(
 					}
 					if (ind >= 0) {
 						j.lvIndex.selectionModel.select(ind)
+						j.lvIndex.scrollTo(ind)
 					}
 				}
 			}
