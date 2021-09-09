@@ -22,30 +22,10 @@ class MainData(dbfDirectory: String) {
 	) = (0 until dbf.recordCount).map { i ->
 		val id = dbf[i, idFieldName].toString()
 		val nameTxtId = dbf[i, nameFieldName].toString()
-//		val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
-//		val name = if (nameIndex < 0)
-//			"没找到！"
-//		else
-//			globalTextDbf[nameIndex, "TEXT"].toString()
 		val name = globalTextDbf.findData("TXT_ID", nameTxtId, "TEXT")
 			?.toString() ?: "没找到"
 		IdAndName(id, name)
 	}.observable()
-
-//	init {
-//		for (i in 0 until unitsDbf.recordCount) {
-//			val unitId = unitsDbf[i, "UNIT_ID"].toString()
-//			val nameTxtId = unitsDbf[i, "NAME_TXT"].toString()
-//			val nameIndex = globalTextDbf.find("TXT_ID", nameTxtId)
-//			val unitName = if (nameIndex < 0)
-//				"没找到！"
-//			else
-//				globalTextDbf[nameIndex, "TEXT"].toString()
-//			unitList.add(
-//				IdAndName(unitId, unitName)
-//			)
-//		}
-//	}
 
 	private fun createDataRecord(
 		dbf: DbfWrapper, key: String, keyValue: String,
@@ -62,14 +42,10 @@ class MainData(dbfDirectory: String) {
 					) {
 						val txtId = when (value.substring(4, 6)) {
 							"uu" -> {
-								// val unitRecNo = unitsDbf.find("UNIT_ID", value)
-								// if (unitRecNo >= 0) unitsDbf[unitRecNo, "NAME_TXT"] else value
 								unitsDbf.findData("UNIT_ID", value, "NAME_TXT")
 									?: value
 							}
 							"rr" -> {
-								// val raceRecNo = raceDbf.find("RACE_ID", value)
-								// if (raceRecNo >= 0) raceDbf[raceRecNo, "NAME_TXT"] else value
 								raceDbf.findData("RACE_ID", value, "NAME_TXT")
 									?: value
 							}
@@ -85,9 +61,6 @@ class MainData(dbfDirectory: String) {
 								value
 							}
 						}
-//						val txtNo = globalTextDbf.find("TXT_ID", txtId)
-//						// println("$txtId ----------------> $txtNo")
-//						globalTextDbf[txtNo, "TEXT"].toString()
 						globalTextDbf.findData("TXT_ID", txtId, "TEXT")
 							?.toString()
 					} else {
@@ -195,7 +168,7 @@ class MainData(dbfDirectory: String) {
 	fun createSpellRecord(spellId: String) =
 		createDataRecord(
 			spellDbf, "SPELL_ID", spellId,
-			"DESC_TXT", "UNIT_ID", "MODIF_TXT"
+			"NAME_TXT", "DESC_TXT", "UNIT_ID", "MODIF_TXT"
 		)
 
 }

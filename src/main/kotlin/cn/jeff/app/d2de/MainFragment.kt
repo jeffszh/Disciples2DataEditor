@@ -34,21 +34,6 @@ class MainFragment(
 		)
 		j = loader.getController()
 
-//		val lookupOp = Bindings.createObjectBinding({
-//			val tg = j.tgLookupType.selectedToggle as RadioButton
-//			tg to j.tfFilter.text
-//		}, j.tgLookupType.selectedToggleProperty(), j.tfFilter.textProperty())
-
-//		j.tfFilter.textProperty().addListener { _, _, new ->
-//			if (new.isBlank()) {
-//				j.lvIndex.items = indexList
-//			} else {
-//				j.lvIndex.items = indexList.filtered {
-//					it.toString().contains(new, ignoreCase = true)
-//				}
-//			}
-//		}
-
 		j.tgLookupType.selectedToggleProperty().onChange {
 			if (tgText == "定位") {
 				j.lvIndex.items = indexList
