@@ -14,6 +14,7 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 	val mainDataProperty = SimpleObjectProperty<MainData>()
 	var mainData: MainData by mainDataProperty
 		private set
+//	private var unitFragment: MainFragment by singleAssign()
 
 	init {
 		primaryStage.isResizable = true
@@ -43,25 +44,25 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 	}
 
 	private fun createTabs() {
-		j.mainTabPane.tab(
-			MainFragment(mainData.unitList, MainData::createUnitRecord) {
-				setCustomAction("ATTACK_ID") {
-					EditAttackWnd(it).openWindow()
-				}
-				setCustomAction("ATTACK2_ID") {
-					EditAttackWnd(it).openWindow()
-				}
-				setCustomAction("RACE_ID") {
-					EditRaceWnd(it).openWindow()
-				}
-				setCustomAction("DYN_UPG1") {
-					EditDynUpgradeWnd(it).openWindow()
-				}
-				setCustomAction("DYN_UPG2") {
-					EditDynUpgradeWnd(it).openWindow()
-				}
+		val unitFragment = MainFragment(mainData.unitList, MainData::createUnitRecord) {
+			setCustomAction("ATTACK_ID") {
+				EditAttackWnd(it).openWindow()
 			}
-		).text = "兵种（unit）"
+			setCustomAction("ATTACK2_ID") {
+				EditAttackWnd(it).openWindow()
+			}
+			setCustomAction("RACE_ID") {
+				EditRaceWnd(it).openWindow()
+			}
+			setCustomAction("DYN_UPG1") {
+				EditDynUpgradeWnd(it).openWindow()
+			}
+			setCustomAction("DYN_UPG2") {
+				EditDynUpgradeWnd(it).openWindow()
+			}
+		}
+		val unitTab = j.mainTabPane.tab(unitFragment)
+		unitTab.text = "兵种（unit）"
 
 		j.mainTabPane.tab(
 			MainFragment(mainData.artifactsList, MainData::createArtifactsRecord) {
@@ -73,6 +74,10 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 				}
 				setCustomAction("MOD_POTION") {
 					EditModiWnd(it).openWindow()
+				}
+				setCustomAction("UNIT_ID") {
+					j.mainTabPane.selectionModel.select(unitTab)
+					unitFragment.tfText = it
 				}
 			}
 		).text = "物品（item）"

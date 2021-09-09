@@ -19,7 +19,11 @@ class MainFragment(
 	private val j: MainFragmentJ
 	private val mainWnd: MainWnd by inject()
 	private val tgText get() = (j.tgLookupType.selectedToggle as RadioButton).text
-	private val tfText get() = j.tfFilter.text
+	var tfText: String
+		get() = j.tfFilter.text
+		set(value) {
+			j.tfFilter.text = value
+		}
 
 	init {
 		val loader = FXMLLoader()
