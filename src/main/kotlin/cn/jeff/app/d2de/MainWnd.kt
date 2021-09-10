@@ -64,17 +64,17 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 		val unitTab = j.mainTabPane.tab(unitFragment)
 		unitTab.text = "兵种（unit）"
 
-		j.mainTabPane.tab(
-			MainFragment(mainData.spellList, MainData::createSpellRecord) {
-				setCustomAction("MODIF_ID") {
-					EditModiWnd(it).openWindow()
-				}
-				setCustomAction("UNIT_ID") {
-					j.mainTabPane.selectionModel.select(unitTab)
-					unitFragment.tfText = it
-				}
+		val spellFragment = MainFragment(mainData.spellList, MainData::createSpellRecord) {
+			setCustomAction("MODIF_ID") {
+				EditModiWnd(it).openWindow()
 			}
-		).text = "魔法（spell）"
+			setCustomAction("UNIT_ID") {
+				j.mainTabPane.selectionModel.select(unitTab)
+				unitFragment.tfText = it
+			}
+		}
+		val spellTab = j.mainTabPane.tab(spellFragment)
+		spellTab.text = "魔法（spell）"
 
 		j.mainTabPane.tab(
 			MainFragment(mainData.artifactsList, MainData::createArtifactsRecord) {
@@ -90,6 +90,10 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 				setCustomAction("UNIT_ID") {
 					j.mainTabPane.selectionModel.select(unitTab)
 					unitFragment.tfText = it
+				}
+				setCustomAction("SPELL_ID") {
+					j.mainTabPane.selectionModel.select(spellTab)
+					spellFragment.tfText = it
 				}
 			}
 		).text = "物品（item）"
