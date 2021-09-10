@@ -13,18 +13,31 @@ class MainData(dbfDirectory: String) {
 	private val artifactsDbf = DbfWrapper("$dbfDirectory/GItem.DBF")
 	private val modiDbf = DbfWrapper("$dbfDirectory/GmodifL.dbf")
 	private val spellDbf = DbfWrapper("$dbfDirectory/Gspells.dbf")
+	private val spellResearchDbf = DbfWrapper("$dbfDirectory/GSpellR.dbf")
 	val unitList = createIndexList(unitsDbf, "UNIT_ID")
 	val artifactsList = createIndexList(artifactsDbf, "ITEM_ID")
 	val spellList = createIndexList(spellDbf, "SPELL_ID")
+	val spellResearchList = createIndexList(
+		spellResearchDbf, "LORD_ID | SPELL_ID",
+		""
+	)
 
 	private fun createIndexList(
 		dbf: DbfWrapper, idFieldName: String, nameFieldName: String = "NAME_TXT"
 	) = (0 until dbf.recordCount).map { i ->
-		val id = dbf[i, idFieldName].toString()
-		val nameTxtId = dbf[i, nameFieldName].toString()
-		val name = globalTextDbf.findData("TXT_ID", nameTxtId, "TEXT")
-			?.toString() ?: "没找到"
-		IdAndName(id, name)
+		// val id = dbf[i, idFieldName].toString()
+		val idFieldList = idFieldName.split("|").map { it.trim() }
+		val id = idFieldList.map {
+			dbf[i, it]
+		}.joinToString(" | ")
+		if (nameFieldName.isBlank()) {
+			IdAndName(id, "")
+		} else {
+			val nameTxtId = dbf[i, nameFieldName].toString()
+			val name = globalTextDbf.findData("TXT_ID", nameTxtId, "TEXT")
+				?.toString() ?: "没找到"
+			IdAndName(id, name)
+		}
 	}.observable()
 
 	private fun createDataRecord(
@@ -170,6 +183,11 @@ class MainData(dbfDirectory: String) {
 		createDataRecord(
 			spellDbf, "SPELL_ID", spellId,
 			"NAME_TXT", "DESC_TXT", "UNIT_ID", "MODIF_TXT"
+		)
+
+	fun createSpellResearchRecord(spellResearchId: String) =
+		createDataRecord(
+			spellResearchDbf, "LORD_ID | SPELL_ID", spellResearchId
 		)
 
 }

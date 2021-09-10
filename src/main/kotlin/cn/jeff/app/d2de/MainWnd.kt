@@ -97,6 +97,15 @@ class MainWnd : View("圣战群英传2数据编辑器") {
 				}
 			}
 		).text = "物品（item）"
+
+		j.mainTabPane.tab(
+			MainFragment(mainData.spellResearchList, MainData::createSpellResearchRecord) {
+				setCustomAction("SPELL_ID") {
+					j.mainTabPane.selectionModel.select(spellTab)
+					spellFragment.tfText = it
+				}
+			}
+		).text = "魔法研究（spellR）"
 	}
 
 }
