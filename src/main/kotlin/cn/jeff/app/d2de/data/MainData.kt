@@ -61,8 +61,9 @@ class MainData(dbfDirectory: String) {
 								value
 							}
 						}
-						globalTextDbf.findData("TXT_ID", txtId, "TEXT")
-							?.toString()
+						globalTextDbf.findData(
+							"TXT_ID", txtId.toString(), "TEXT"
+						)?.toString()
 					} else {
 						null
 					}

@@ -1,5 +1,5 @@
 package cn.jeff.app.d2de.data
 
-class IdAndName(val id: String, private val name: String) {
+open class IdAndName(val id: String, protected val name: String) {
 	override fun toString() = "$id - $name"
 }

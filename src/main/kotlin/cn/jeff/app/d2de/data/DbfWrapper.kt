@@ -62,17 +62,23 @@ class DbfWrapper(private val dbfFilename: String) {
 	val recordCount get() = records.count()
 	val fieldCount get() = fields.count()
 
-	fun find(fieldName: String, fieldValue: Any?): Int {
-		val fieldIndex = fields.indexOfFirst {
-			it.name == fieldName
-		}
+	fun find(keyNames: String, keyValues: String): Int {
+		val keyList = keyNames.split("|").map { it.trim() }
+		val valueList = keyValues.split("|").map { it.trim() }
 		return records.indexOfFirst {
-			it[fieldIndex].toString() == fieldValue.toString()
+			keyList.indices.all { i ->
+				val key = keyList[i]
+				val value = valueList[i]
+				val fieldIndex = fields.indexOfFirst {
+					it.name == key
+				}
+				it[fieldIndex].toString() == value
+			}
 		}
 	}
 
-	fun findData(fieldName: String, fieldValue: Any?, dataName: String): Any? {
-		val recNo = find(fieldName, fieldValue)
+	fun findData(keyNames: String, keyValues: String, dataName: String): Any? {
+		val recNo = find(keyNames, keyValues)
 		return if (recNo >= 0) {
 			this[recNo, dataName]
 		} else {
