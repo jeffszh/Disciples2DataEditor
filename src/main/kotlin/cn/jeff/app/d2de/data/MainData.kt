@@ -196,9 +196,4 @@ class MainData(dbfDirectory: String) {
 			"LORD_ID", "SPELL_ID"
 		)
 
-//	fun createLordRecord(lordId: String) =
-//		createDataRecord(
-//			lordDbf, "LORD_ID", lordId
-//		)
-
 }

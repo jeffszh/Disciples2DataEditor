@@ -94,13 +94,13 @@ class MainFragment(
 		idAndName ?: return
 		val mainData = mainWnd.mainData
 		// mainData ?: return
-		val unitRecord = mainData.createRecordFunc(idAndName.id)
-		unitRecord.extraSettingsFunc()
-		unitRecord.attachToTableView(j.mainTableView)
-		j.btnSave.enableWhen(unitRecord.changedProperty)
+		val dataRecord = mainData.createRecordFunc(idAndName.id)
+		dataRecord.extraSettingsFunc()
+		dataRecord.attachToTableView(j.mainTableView)
+		j.btnSave.enableWhen(dataRecord.changedProperty)
 		j.btnSave.action {
-			unitRecord.saveDbf()
-			unitRecord.changedProperty.value = false
+			dataRecord.saveDbf()
+			dataRecord.changedProperty.value = false
 		}
 	}
 
