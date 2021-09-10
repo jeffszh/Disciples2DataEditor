@@ -14,6 +14,7 @@ class MainData(dbfDirectory: String) {
 	private val modiDbf = DbfWrapper("$dbfDirectory/GmodifL.dbf")
 	private val spellDbf = DbfWrapper("$dbfDirectory/Gspells.dbf")
 	private val spellResearchDbf = DbfWrapper("$dbfDirectory/GSpellR.dbf")
+	private val lordDbf = DbfWrapper("$dbfDirectory/Glord.dbf")
 	val unitList = createIndexList(unitsDbf, "UNIT_ID")
 	val artifactsList = createIndexList(artifactsDbf, "ITEM_ID")
 	val spellList = createIndexList(spellDbf, "SPELL_ID")
@@ -68,6 +69,10 @@ class MainData(dbfDirectory: String) {
 							}
 							"ss" -> {
 								spellDbf.findData("SPELL_ID", value, "NAME_TXT")
+									?: value
+							}
+							"LR" -> {
+								lordDbf.findData("LORD_ID", value, "NAME_TXT")
 									?: value
 							}
 							else -> {
@@ -187,7 +192,13 @@ class MainData(dbfDirectory: String) {
 
 	fun createSpellResearchRecord(spellResearchId: String) =
 		createDataRecord(
-			spellResearchDbf, "LORD_ID | SPELL_ID", spellResearchId
+			spellResearchDbf, "LORD_ID | SPELL_ID", spellResearchId,
+			"LORD_ID", "SPELL_ID"
 		)
+
+//	fun createLordRecord(lordId: String) =
+//		createDataRecord(
+//			lordDbf, "LORD_ID", lordId
+//		)
 
 }
