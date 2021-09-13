@@ -1,5 +1,6 @@
 package cn.jeff.app.d2de.data
 
+import cn.jeff.app.d2de.EditAttackWnd
 import tornadofx.*
 import java.lang.Exception
 
@@ -15,6 +16,7 @@ class MainData(dbfDirectory: String) {
 	private val spellDbf = DbfWrapper("$dbfDirectory/Gspells.dbf")
 	private val spellResearchDbf = DbfWrapper("$dbfDirectory/GSpellR.dbf")
 	private val lordDbf = DbfWrapper("$dbfDirectory/Glord.dbf")
+	private val buildingDbf = DbfWrapper("$dbfDirectory/GBuild.dbf")
 	val unitList = createIndexList(unitsDbf, "UNIT_ID")
 	val artifactsList = createIndexList(artifactsDbf, "ITEM_ID")
 	val spellList = createIndexList(spellDbf, "SPELL_ID")
@@ -73,6 +75,10 @@ class MainData(dbfDirectory: String) {
 							}
 							"LR" -> {
 								lordDbf.findData("LORD_ID", value, "NAME_TXT")
+									?: value
+							}
+							"bb", "BB" -> {
+								buildingDbf.findData("BUILD_ID", value, "NAME_TXT")
 									?: value
 							}
 							else -> {
@@ -147,7 +153,7 @@ class MainData(dbfDirectory: String) {
 		createDataRecord(
 			unitsDbf, "UNIT_ID", unitId,
 			"NAME_TXT", "DESC_TXT", "ABIL_TXT", "PREV_ID",
-			"RACE_ID", "ATTACK_ID", "ATTACK2_ID", "BASE_UNIT"
+			"RACE_ID", "ATTACK_ID", "ATTACK2_ID", "BASE_UNIT", "UPGRADE_B"
 		)
 
 	fun createAttackRecord(attackId: String) =
@@ -158,7 +164,11 @@ class MainData(dbfDirectory: String) {
 			"SOURCE" to attackSourceList,
 			"REACH" to attackReachList,
 			"CLASS" to attackClassList,
-		)
+		).apply {
+			setCustomAction("ALT_ATTACK") {
+				EditAttackWnd(it).openWindow()
+			}
+		}
 
 	fun createRaceRecord(raceId: String) =
 		createDataRecord(
